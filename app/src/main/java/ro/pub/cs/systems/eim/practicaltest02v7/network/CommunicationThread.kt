@@ -18,7 +18,7 @@ class CommunicationThread(private val socket: Socket) : Thread() {
     @Volatile
     private var isRunning = true
     private val hashmap: HashMap<String, Pair<String, String>> = HashMap()
-
+    private var result : String = ""
     override fun run() {
         var bufferedReader: BufferedReader? = null
         var printWriter: PrintWriter? = null
@@ -45,14 +45,20 @@ class CommunicationThread(private val socket: Socket) : Thread() {
                 } else {
                     Log.d(Constants.TAG, "Received request for: $address")
                 }
-                if(commands[0] == "set")
-                    hashmap[socket.inetAddress.toString()] = Pair(commands[1], commands[2])
+                if(commands[0] == "set") {
+                    Log.d(Constants.TAG, "Am adaugat pentru" + socket.port.toString())
+                    hashmap[socket.port.toString()] = Pair(commands[1], commands[2])
+                }
                 // Fetch content cu coroutines
-                else if(commands[0] == "reset")
-                    hashmap.remove(socket.inetAddress.toString())
-                else if(commands[])
-                val result = runBlocking {
-                    getTime()
+                else if(commands[0] == "reset") {
+                    Log.d(Constants.TAG, "Am sters pentru" + socket.port.toString())
+                    hashmap.remove(socket.port.toString())
+                }
+
+                else if(commands[0] == "poll") {
+                    result = runBlocking {
+                        getTime()
+                    }
                 }
 
                 // Trimite rezultatul înapoi
@@ -88,49 +94,6 @@ class CommunicationThread(private val socket: Socket) : Thread() {
             }
         }
     }
-
-//    private suspend fun fetchWebContent(address: String): String = withContext(Dispatchers.IO) {
-//        // Verifică cache-ul
-//        if (hashmap.containsKey(address)) {
-//            Log.d(Constants.TAG, "Returning cached content for: $address")
-//            return@withContext hashmap[address]!!
-//        }
-//
-//        val client = OkHttpClient()
-//        val request = Request.Builder()
-//            .url(address)
-//            .build()
-//
-//        Log.d(Constants.TAG, "Fetching: ${request.url}")
-//
-//        try {
-//            client.newCall(request).execute().use { response ->
-//                if (response.isSuccessful && response.body != null) {
-//                    val content = response.body!!.string()
-//                    hashmap[address] = content  // Salvează în cache
-//                    content
-//
-//                    // val html = response.body!!.string()
-//                    //
-//                    //                // Parsează HTML-ul cu Jsoup
-//                    //                val doc = Jsoup.parse(html)
-//                    //
-//                    //                // Extrage doar body-ul (fără <head>, <script>, etc.)
-//                    //                val bodyContent = doc.body().text() // Doar text, fără taguri
-//                    //                // SAU
-//                    //                // val bodyContent = doc.body().html() // Cu taguri HTML
-//                    //
-//                    //                hashmap[address] = bodyContent
-//                    //                bodyContent
-//                } else {
-//                    "ERROR - ${response.code}"
-//                }
-//            }
-//        } catch (e: IOException) {
-//            Log.e(Constants.TAG, "IOException: ${e.message}")
-//            "ERROR - ${e.message}"
-//        }
-//    }
 
     // Metodă pentru a opri thread-ul
     fun stopCommunication() {

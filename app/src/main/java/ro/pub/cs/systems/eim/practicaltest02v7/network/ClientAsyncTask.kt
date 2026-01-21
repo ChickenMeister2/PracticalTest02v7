@@ -10,7 +10,7 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.net.Socket
 
-class ClientAsyncTask() :
+class ClientAsyncTask(private var textViewResponse : TextView) :
     AsyncTask<String?, String?, Void?>() {
 
     companion object {
@@ -72,7 +72,13 @@ class ClientAsyncTask() :
     override fun onPostExecute(result: Void?) {
         isConnected = false
     }
+    override fun onPreExecute() {
+        textViewResponse.text = ""
+    }
 
+    override fun onProgressUpdate(vararg progress: String?) {
+        textViewResponse.append(progress[0] + "\n")
+    }
     // Metodă pentru a trimite URL către server
     fun sendUrl(url: String) {
         if (isConnected && printWriter != null) {
@@ -80,9 +86,9 @@ class ClientAsyncTask() :
                 try {
                     printWriter!!.println(url)
                     printWriter!!.flush()
-                    Log.d(Constants.TAG, "Sent URL to server: $url")
+                    Log.d(Constants.TAG, "Sent Command to server: $url")
                 } catch (e: Exception) {
-                    Log.e(Constants.TAG, "Error sending URL: ${e.message}")
+                    Log.e(Constants.TAG, "Error sending Command: ${e.message}")
                 }
             }.start()
         } else {

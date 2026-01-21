@@ -3,6 +3,7 @@ package ro.pub.cs.systems.eim.practicaltest02v7
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +22,7 @@ class PracticalTest02v7MainActivity : AppCompatActivity() {
     lateinit var buttonConectareServer: Button
 
     lateinit var editTextComanda : EditText
-
+    lateinit var textViewResponse : TextView
     lateinit var buttonSend : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +50,7 @@ class PracticalTest02v7MainActivity : AppCompatActivity() {
 
         // pornirea serverului
         buttonPornireServer.setOnClickListener{ ServerThread(editTextPortPornireServer.text.toString()).startServer() }
-
+        textViewResponse = findViewById(R.id.textView_body_primit)
         // conectarea la server
         buttonConectareServer.setOnClickListener {
             val host = editTextIpClient.text.toString();
@@ -59,7 +60,7 @@ class PracticalTest02v7MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            clientTask = ClientAsyncTask()
+            clientTask = ClientAsyncTask(textViewResponse)
             clientTask!!.execute(host, port)
 
             Toast.makeText(this, "Conectare la server...", Toast.LENGTH_SHORT).show()
