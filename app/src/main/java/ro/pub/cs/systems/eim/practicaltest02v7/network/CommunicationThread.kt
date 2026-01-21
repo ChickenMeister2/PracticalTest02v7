@@ -18,7 +18,7 @@ class CommunicationThread(private val socket: Socket) : Thread() {
     @Volatile
     private var isRunning = true
     private val hashmap: HashMap<String, Pair<String, String>> = HashMap()
-    private var result : String = ""
+    var result : String = ""
     override fun run() {
         var bufferedReader: BufferedReader? = null
         var printWriter: PrintWriter? = null
@@ -48,13 +48,14 @@ class CommunicationThread(private val socket: Socket) : Thread() {
                 if(commands[0] == "set") {
                     Log.d(Constants.TAG, "Am adaugat pentru" + socket.port.toString())
                     hashmap[socket.port.toString()] = Pair(commands[1], commands[2])
+                    result = "Added"
                 }
                 // Fetch content cu coroutines
                 else if(commands[0] == "reset") {
                     Log.d(Constants.TAG, "Am sters pentru" + socket.port.toString())
                     hashmap.remove(socket.port.toString())
+                    result = "Am sters cu succes"
                 }
-
                 else if(commands[0] == "poll") {
                     result = runBlocking {
                         getTime()
@@ -108,13 +109,14 @@ class CommunicationThread(private val socket: Socket) : Thread() {
     private fun getTime(): String {
         var utcTime: String = ""
         try {
+            Log.i(Constants.TAG, "Am facut pooling")
             val socket = Socket("time.nist.gov", 13)
             val bufferedReader = Utilities.getReader(socket)
             bufferedReader.readLine()
             utcTime = bufferedReader.readLine()
-            Log.i("PracticalTest02", "utcTime: " + utcTime)
+            Log.i(Constants.TAG, "utcTime: " + utcTime)
         } catch (ioException: IOException) {
-            Log.e("PracticalTest02", ioException.message!!)
+            Log.e(Constants.TAG, ioException.message!!)
             ioException.printStackTrace()
         }
 

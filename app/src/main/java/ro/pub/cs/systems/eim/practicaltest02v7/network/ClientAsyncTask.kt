@@ -61,14 +61,6 @@ class ClientAsyncTask(private var textViewResponse : TextView) :
         return null
     }
 
-//    override fun onPreExecute() {
-//        serverMessageTextView.text = ""
-//    }
-//
-//    override fun onProgressUpdate(vararg progress: String?) {
-//        serverMessageTextView.append(progress[0] + "\n")
-//    }
-
     override fun onPostExecute(result: Void?) {
         isConnected = false
     }
@@ -79,7 +71,6 @@ class ClientAsyncTask(private var textViewResponse : TextView) :
     override fun onProgressUpdate(vararg progress: String?) {
         textViewResponse.append(progress[0] + "\n")
     }
-    // Metodă pentru a trimite URL către server
     fun sendUrl(url: String) {
         if (isConnected && printWriter != null) {
             Thread {
